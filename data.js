@@ -161,8 +161,8 @@ window.DASHBOARD_DATA = {
       business_content:'글로벌 브랜드 숙박시설·골프장 유치로 극복하는 체류형 관광거점 조성',
       period:'2027~2030', budget_million:460177,
       review_reason:'신규 관광단지 조성, 입지 및 사업실현 가능성 확인 必',
-      included_in_field_survey:true, exclusion_note:null, location_image:'image0' }
-     { id:4, region:'경북', site_no:2, site_name:'상주 경천대 관광단지', site_type:'관광단지',
+      included_in_field_survey:true, exclusion_note:null, location_image:'image0' },
+    { id:4, region:'경북', site_no:2, site_name:'상주 경천대 관광단지', site_type:'관광단지',
       address:'경상북도 상주시 사벌국면 삼덕리 1-41', lat:36.4583408, lng:128.2463409,
       business_content:'낙동강 수변경관과 경천대 자연자원을 활용한 체류형 복합 관광단지 조성',
       period:'2026~2032', budget_million:530000,

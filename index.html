@@ -4,8 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>제8차 권역계획 동남권 현장실사 협의회(8.20)</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=0a9dh6il2x"></script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="data.js"></script>
 <script src="img_data.js"></script>
@@ -169,8 +168,7 @@
   .site-meta { font-size: 11px; color: var(--text-muted); margin-left: 30px; display: flex; gap: 12px; flex-wrap: wrap; }
   .site-meta b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
 
-  .leaflet-popup-content-wrapper { border-radius: 8px; box-shadow: var(--shadow); }
-  .popup-content { min-width: 220px; max-width: 300px; font-family: inherit; }
+  .popup-content { min-width: 220px; max-width: 300px; font-family: 'IBM Plex Sans KR','Noto Sans KR',sans-serif; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; box-shadow: var(--shadow); font-size: 13px; color: var(--text); }
   .popup-content h4 { margin: 0 0 6px; font-size: 14px; color: var(--ink); font-weight: 700; }
   .popup-content .pop-addr { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
   .popup-content .pop-desc { font-size: 12px; color: var(--text); line-height: 1.5; }
@@ -206,12 +204,15 @@
     border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     display: flex; align-items: center; justify-content: center;
     color: white; font-weight: 700; font-size: 13px;
+    position: relative;
   }
-  .marker-pin span { transform: rotate(45deg); }
+  .marker-pin span { transform: rotate(45deg); display: inline-block; }
   .marker-pin.busan { background: var(--busan); }
   .marker-pin.gyeongbuk { background: var(--gyeongbuk); }
   .marker-pin.gyeongnam { background: var(--gyeongnam); }
-  .marker-pin.excluded { background: var(--text-muted); opacity: 0.85; border-color: #ffe5df; }
+  .marker-pin.excluded { background: var(--text-muted); opacity: 0.9; border-color: #ffe5df; }
+  .marker-wrap { position: relative; width: 32px; height: 44px; }
+  .marker-wrap .marker-pin { position: absolute; top: 0; left: 1px; }
 </style>
 </head>
 <body>
@@ -307,27 +308,45 @@ function initTabs() {
   });
 }
 
-function buildMarkerIcon(region, siteNo, excluded) {
+function buildMarkerHTML(region, siteNo, excluded) {
   const cls = excluded ? 'excluded' : REGION_CLASS[region] || '';
-  return L.divIcon({
-    className: 'custom-marker',
-    html: '<div class="marker-pin ' + cls + '"><span>' + siteNo + '</span></div>',
-    iconSize: [30, 42], iconAnchor: [15, 42], popupAnchor: [0, -38]
-  });
+  return '<div class="marker-wrap"><div class="marker-pin ' + cls + '"><span>' + siteNo + '</span></div></div>';
 }
 
-function renderMap() {
-  mapInstance = L.map('map', { scrollWheelZoom: true, zoomControl: true }).setView([35.5, 128.5], 7);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap', maxZoom: 19
-  }).addTo(mapInstance);
+let openInfoWindow = null;
 
-  const bounds = [];
+function renderMap() {
+  if (typeof naver === 'undefined' || !naver.maps) {
+    document.getElementById('map').innerHTML =
+      '<div style="padding:40px;text-align:center;color:var(--accent-2);">' +
+      '네이버 지도 API를 불러올 수 없습니다. 네트워크 또는 도메인 등록을 확인해주세요.</div>';
+    return;
+  }
+
+  mapInstance = new naver.maps.Map('map', {
+    center: new naver.maps.LatLng(35.6, 128.6),
+    zoom: 8,
+    mapTypeControl: true,
+    mapTypeControlOptions: { style: naver.maps.MapTypeControlStyle.BUTTON, position: naver.maps.Position.TOP_RIGHT },
+    zoomControl: true,
+    zoomControlOptions: { style: naver.maps.ZoomControlStyle.SMALL, position: naver.maps.Position.RIGHT_CENTER }
+  });
+
+  const bounds = new naver.maps.LatLngBounds();
   sites.forEach(site => {
     if (!site.lat || !site.lng) return;
     const excluded = !site.included_in_field_survey;
-    const icon = buildMarkerIcon(site.region, site.site_no, excluded);
-    const marker = L.marker([site.lat, site.lng], { icon }).addTo(mapInstance);
+    const position = new naver.maps.LatLng(site.lat, site.lng);
+    const marker = new naver.maps.Marker({
+      position: position,
+      map: mapInstance,
+      title: site.site_name,
+      icon: {
+        content: buildMarkerHTML(site.region, site.site_no, excluded),
+        size: new naver.maps.Size(32, 44),
+        anchor: new naver.maps.Point(16, 44)
+      }
+    });
 
     let imgHtml = '';
     if (site.location_image && window.LOC_IMAGES && window.LOC_IMAGES[site.location_image]) {
@@ -336,7 +355,7 @@ function renderMap() {
     const budgetTxt = site.budget_million ? Number(site.budget_million).toLocaleString() + '백만원' : '-';
     const exclHtml = excluded ? '<div class="pop-excl">※ ' + escapeHTML(site.exclusion_note || '현장조사 제외') + '</div>' : '';
 
-    const popupHtml =
+    const infoHtml =
       '<div class="popup-content">' +
         '<div class="pop-tag">' + escapeHTML(site.region) + ' · ' + escapeHTML(site.site_type) + '</div>' +
         '<h4>' + escapeHTML(site.site_name) + '</h4>' +
@@ -346,11 +365,30 @@ function renderMap() {
         '<div class="pop-desc" style="margin-top:4px;"><b>사업기간:</b> ' + escapeHTML(site.period) + ' · <b>총사업비:</b> ' + escapeHTML(budgetTxt) + '</div>' +
         exclHtml +
       '</div>';
-    marker.bindPopup(popupHtml, { maxWidth: 320 });
-    markerMap[site.id] = marker;
-    bounds.push([site.lat, site.lng]);
+
+    const infoWindow = new naver.maps.InfoWindow({
+      content: infoHtml,
+      maxWidth: 320,
+      backgroundColor: 'transparent',
+      borderColor: 'transparent',
+      borderWidth: 0,
+      anchorSize: new naver.maps.Size(12, 12),
+      pixelOffset: new naver.maps.Point(0, -6)
+    });
+
+    naver.maps.Event.addListener(marker, 'click', function() {
+      if (openInfoWindow) openInfoWindow.close();
+      infoWindow.open(mapInstance, marker);
+      openInfoWindow = infoWindow;
+    });
+
+    markerMap[site.id] = { marker, infoWindow, position };
+    bounds.extend(position);
   });
-  if (bounds.length > 0) mapInstance.fitBounds(bounds, { padding: [40, 40] });
+
+  if (!bounds.isEmpty()) {
+    mapInstance.fitBounds(bounds, { top: 40, right: 40, bottom: 40, left: 40 });
+  }
 }
 
 function renderSiteList() {
@@ -378,18 +416,44 @@ function renderSiteList() {
       '</div>';
     item.addEventListener('click', () => {
       const m = markerMap[site.id];
-      if (m && mapInstance) { mapInstance.setView(m.getLatLng(), 12, { animate: true }); m.openPopup(); }
+      if (m && mapInstance) {
+        mapInstance.setCenter(m.position);
+        mapInstance.setZoom(13);
+        if (openInfoWindow) openInfoWindow.close();
+        m.infoWindow.open(mapInstance, m.marker);
+        openInfoWindow = m.infoWindow;
+      }
     });
     el.appendChild(item);
   });
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+function initDashboard() {
   renderKPIs();
   initTabs();
   renderStrategiesFor('부산');
   renderMap();
   renderSiteList();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // 네이버 지도 SDK 로드 완료 후 초기화
+  if (typeof naver !== 'undefined' && naver.maps) {
+    initDashboard();
+  } else {
+    // 폴백: 최대 5초 대기
+    let tries = 0;
+    const iv = setInterval(function() {
+      tries++;
+      if (typeof naver !== 'undefined' && naver.maps) {
+        clearInterval(iv);
+        initDashboard();
+      } else if (tries > 50) {
+        clearInterval(iv);
+        initDashboard(); // 지도 없이라도 렌더
+      }
+    }, 100);
+  }
 });
 </script>
 </body>

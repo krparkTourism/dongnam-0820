@@ -168,8 +168,19 @@
   .site-meta { font-size: 11px; color: var(--text-muted); margin-left: 30px; display: flex; gap: 12px; flex-wrap: wrap; }
   .site-meta b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
 
-  .popup-content { min-width: 220px; max-width: 300px; font-family: 'IBM Plex Sans KR','Noto Sans KR',sans-serif; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; box-shadow: var(--shadow); font-size: 13px; color: var(--text); }
-  .popup-content h4 { margin: 0 0 6px; font-size: 14px; color: var(--ink); font-weight: 700; }
+  .popup-content { min-width: 220px; max-width: 300px; font-family: 'IBM Plex Sans KR','Noto Sans KR',sans-serif; background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 12px 30px 12px 14px; box-shadow: var(--shadow); font-size: 13px; color: var(--text); position: relative; }
+  .popup-content h4 { margin: 0 0 6px; font-size: 14px; color: var(--ink); font-weight: 700; padding-right: 4px; }
+  .popup-close {
+    position: absolute; top: 6px; right: 6px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--bg-muted); color: var(--text-muted);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 14px; line-height: 1;
+    font-weight: 600; user-select: none;
+    transition: all 0.15s;
+  }
+  .popup-close:hover { background: var(--accent-2); color: white; border-color: var(--accent-2); }
   .popup-content .pop-addr { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
   .popup-content .pop-desc { font-size: 12px; color: var(--text); line-height: 1.5; }
   .popup-content img { width: 100%; border-radius: 4px; margin: 6px 0; border: 1px solid var(--border); }
@@ -213,6 +224,88 @@
   .marker-pin.excluded { background: var(--text-muted); opacity: 0.9; border-color: #ffe5df; }
   .marker-wrap { position: relative; width: 32px; height: 44px; }
   .marker-wrap .marker-pin { position: absolute; top: 0; left: 1px; }
+
+  /* Meeting sections (제1장, 제3장, 조정위원) */
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 8px; }
+  @media (max-width: 900px) { .info-grid { grid-template-columns: 1fr; } }
+  .info-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow);
+  }
+  .info-card.wide { grid-column: 1 / -1; }
+  .info-card h3 {
+    margin: 0 0 12px; font-size: 15px; font-weight: 700; color: var(--ink);
+    padding-bottom: 8px; border-bottom: 2px solid var(--ink);
+    display: flex; align-items: baseline; gap: 8px;
+  }
+  .info-card h3 .badge {
+    display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: .06em;
+    background: var(--ink); color: var(--bg-card); padding: 2px 8px; border-radius: 3px;
+  }
+  .info-block { margin-top: 10px; }
+  .info-block:first-child { margin-top: 0; }
+  .info-block .info-label {
+    font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: .04em;
+    margin-bottom: 6px; display: inline-block;
+  }
+  .info-block ul { margin: 4px 0 8px; padding-left: 18px; }
+  .info-block li { font-size: 13px; line-height: 1.6; color: var(--text); margin-bottom: 3px; }
+  .info-block .criteria-item {
+    padding: 8px 0; border-top: 1px dashed var(--border);
+    display: grid; grid-template-columns: 90px 1fr; gap: 12px; align-items: baseline;
+  }
+  .info-block .criteria-item:first-child { border-top: 0; }
+  .info-block .criteria-key {
+    font-weight: 700; font-size: 12.5px; color: var(--ink);
+    background: var(--bg-muted); padding: 3px 8px; border-radius: 4px;
+    text-align: center; white-space: nowrap;
+  }
+  .info-block .criteria-desc { font-size: 12.5px; color: var(--text); line-height: 1.55; }
+  .info-note {
+    margin-top: 10px; padding: 8px 12px; background: var(--bg-muted);
+    border-left: 3px solid var(--accent); border-radius: 3px;
+    font-size: 11.5px; color: var(--text-muted); line-height: 1.5;
+  }
+  .region-row {
+    display: grid; grid-template-columns: 80px 1fr auto; gap: 12px;
+    padding: 10px 0; border-top: 1px dashed var(--border); align-items: baseline;
+  }
+  .region-row:first-child { border-top: 0; }
+  .region-row .rr-name {
+    font-weight: 700; font-size: 13px; color: var(--ink);
+    background: var(--bg-muted); padding: 3px 8px; border-radius: 4px; text-align: center;
+  }
+  .region-row .rr-name.busan { background: var(--busan); color: white; }
+  .region-row .rr-name.daegu { background: var(--daegu); color: white; }
+  .region-row .rr-name.gyeongbuk { background: var(--gyeongbuk); color: white; }
+  .region-row .rr-name.gyeongnam { background: var(--gyeongnam); color: white; }
+  .region-row .rr-name.ulsan { background: var(--text-muted); color: white; }
+  .region-row .rr-desc { font-size: 12.5px; color: var(--text); }
+  .region-row .rr-desc .rr-sites {
+    display: block; margin-top: 4px; font-size: 11.5px; color: var(--text-muted);
+  }
+  .region-row .rr-count {
+    font-size: 11px; font-weight: 700; color: var(--accent);
+    white-space: nowrap; font-variant-numeric: tabular-nums;
+  }
+  .agenda-item {
+    padding: 12px 14px; border: 1px solid var(--border); border-radius: 6px;
+    background: var(--bg-muted); margin-bottom: 10px;
+  }
+  .agenda-item:last-child { margin-bottom: 0; }
+  .agenda-item .a-key {
+    font-weight: 700; font-size: 13px; color: var(--ink); margin-bottom: 6px;
+    display: flex; align-items: baseline; gap: 6px;
+  }
+  .agenda-item .a-key:before {
+    content: '▲'; color: var(--accent-2); font-size: 11px;
+  }
+  .agenda-item .a-desc { font-size: 12.5px; color: var(--text); line-height: 1.55; }
+  .agenda-item .a-note {
+    font-size: 11.5px; color: var(--text-muted); margin-top: 6px;
+    padding-left: 12px; border-left: 2px solid var(--border); line-height: 1.5;
+  }
+  .agenda-item .a-note:before { content: '※ '; color: var(--accent); font-weight: 700; }
 </style>
 </head>
 <body>
@@ -230,6 +323,28 @@
     <div class="kpi gyeongnam"><div class="kpi-label">경남</div><div class="kpi-value" id="kpi-경남">–</div><div class="kpi-sub">전략 · 세부과제 수</div></div>
   </div>
 
+  <!-- 제1장 현장실사 대상 선정기준 -->
+  <div class="section-title">제1장 현장실사 대상 선정기준</div>
+  <div class="info-grid">
+    <div class="info-card">
+      <h3><span class="badge">01</span> 목적</h3>
+      <div class="info-block">
+        <ul id="ch1-purpose"></ul>
+      </div>
+    </div>
+    <div class="info-card">
+      <h3><span class="badge">02</span> 현장실사 대상</h3>
+      <div class="info-block">
+        <ul id="ch1-targets"></ul>
+      </div>
+    </div>
+    <div class="info-card wide">
+      <h3><span class="badge">03</span> 선정 기준</h3>
+      <div class="info-block" id="ch1-criteria"></div>
+      <div class="info-note" id="ch1-note"></div>
+    </div>
+  </div>
+
   <div class="section-title">전략별 관광개발 <span class="count">지역 탭을 선택하면 해당 지역의 전략과 세부과제가 표시됩니다</span></div>
   <div class="tabs">
     <div class="tab busan active" data-region="부산">부산</div>
@@ -238,6 +353,24 @@
     <div class="tab gyeongnam" data-region="경남">경남</div>
   </div>
   <div id="strategy-body"></div>
+
+  <!-- 제3장 현장실사 검토 대상(안) -->
+  <div class="section-title">제3장 현장실사 검토 대상(안) <span class="count">동남권 권역별 검토 결과</span></div>
+  <div class="info-grid">
+    <div class="info-card wide">
+      <h3><span class="badge">권역별 검토</span> 동남권 현장실사 대상(안)</h3>
+      <div class="info-block" id="ch3-regions"></div>
+      <div class="info-note" id="ch3-exclusion"></div>
+    </div>
+  </div>
+
+  <!-- 조정위원 협의사항 -->
+  <div class="section-title">조정위원 협의사항</div>
+  <div class="info-grid">
+    <div class="info-card wide">
+      <div class="info-block" id="agenda-items"></div>
+    </div>
+  </div>
 
   <div class="section-title">신규 관광(단)지 현장실사 대상 <span class="count">동남권 7개소 (통영 도산관광단지 제외)</span></div>
   <div class="map-layout">
@@ -315,6 +448,27 @@ function buildMarkerHTML(region, siteNo, excluded) {
 
 let openInfoWindow = null;
 
+// InfoWindow 열린 후 X 버튼에 닫기 리스너 부착
+function attachCloseButton(infoWindow) {
+  setTimeout(function() {
+    const wrap = document.querySelector('.popup-content');
+    if (!wrap) return;
+    const btn = wrap.querySelector('.popup-close');
+    if (btn && !btn._bound) {
+      btn._bound = true;
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        if (openInfoWindow) {
+          openInfoWindow.close();
+          openInfoWindow = null;
+        }
+      });
+      btn.addEventListener('mousedown', function(e) { e.stopPropagation(); });
+    }
+  }, 50);
+}
+
 function renderMap() {
   if (typeof naver === 'undefined' || !naver.maps) {
     document.getElementById('map').innerHTML =
@@ -357,6 +511,7 @@ function renderMap() {
 
     const infoHtml =
       '<div class="popup-content">' +
+        '<span class="popup-close" title="닫기" aria-label="닫기">×</span>' +
         '<div class="pop-tag">' + escapeHTML(site.region) + ' · ' + escapeHTML(site.site_type) + '</div>' +
         '<h4>' + escapeHTML(site.site_name) + '</h4>' +
         '<div class="pop-addr">' + escapeHTML(site.address) + '</div>' +
@@ -380,6 +535,7 @@ function renderMap() {
       if (openInfoWindow) openInfoWindow.close();
       infoWindow.open(mapInstance, marker);
       openInfoWindow = infoWindow;
+      attachCloseButton(infoWindow);
     });
 
     markerMap[site.id] = { marker, infoWindow, position };
@@ -422,13 +578,102 @@ function renderSiteList() {
         if (openInfoWindow) openInfoWindow.close();
         m.infoWindow.open(mapInstance, m.marker);
         openInfoWindow = m.infoWindow;
+        attachCloseButton(m.infoWindow);
       }
     });
     el.appendChild(item);
   });
 }
 
+// ===== 회의 자료 3개 섹션 데이터 =====
+const MEETING_SECTIONS = {
+  ch1: {
+    purpose: [
+      "2-1차 시안에 제시된 신규 관광단지 및 주요 관광개발사업의 입지 적정성 및 사업 추진 가능성을 현장에서 검증",
+      "2-1차 시안의 서면검토에서 확인하기 어려운 사항을 직접 확인하여 사업계획의 실현성과 타당성을 제고"
+    ],
+    targets: [
+      "신규 관광지 및 관광단지, 대규모 관광개발사업 (단, 지방비사업 제외)",
+      "전략사업 중 구체적 입지가 제시된 사업",
+      "조정위원 검토 결과 현장 확인이 필요하다고 판단되는 사업"
+    ],
+    criteria: [
+      { key: "사업 규모", desc: "총사업비, 사업면적, 도입시설 규모 및 투자계획 등을 고려할 때 권역계획에 미치는 영향이 크거나 현장 확인이 필요한 사업" },
+      { key: "사업 특성", desc: "구체적인 개발입지가 제시되어 입지여건, 주변 관광자원과의 연계성 및 사업의 실현 가능성에 대한 확인이 필요한 사업" },
+      { key: "조정 필요성", desc: "서면검토만으로 판단이 어렵거나 검토의견 간 차이가 있어 사업계획의 보완·조정이 필요한 사업" }
+    ],
+    note: "현장실사는 개별사업별로 조정위원 최소 2~3명, 연구원 2명, 문체부로 구성"
+  },
+  ch3: {
+    regions: [
+      { region: "부산권", cls: "busan", count: "2개소", desc: "신규 관광단지 2개소 현장실사 필요성 검토",
+        sites: ["영도 중리산 관광단지", "영도 중리해변 배후지 관광단지"] },
+      { region: "대구권", cls: "daegu", count: "해당 없음", desc: "신규 관광(단)지 계획이 없어 현장실사 대상 없음", sites: [] },
+      { region: "경북권", cls: "gyeongbuk", count: "2개소", desc: "신규 관광단지 2개소 현장실사 필요성 검토",
+        sites: ["울진 오션리조트 관광단지", "상주 경천대 관광단지"] },
+      { region: "경남권", cls: "gyeongnam", count: "4개소", desc: "신규 관광(단)지 1개소, 소규모 관광단지 3개소 현장실사 필요성 검토",
+        sites: ["통영 도산 관광단지", "함안 아라가야 소규모 관광단지", "악양 노을감성 소규모 관광단지", "남해 평산 소규모 관광단지"] },
+      { region: "울산권", cls: "ulsan", count: "보류", desc: "2-1차 시안 미제출로 현장실사 대상 검토 보류", sites: [] }
+    ],
+    exclusion: "남부권·충청유교문화권·서부내륙권 광역관광개발사업은 한국문화관광연구원 지역관광개발관리센터의 별도 평가 대상사업으로, 평가의 중복성을 고려하여 현장실사 검토 대상에서 제외"
+  },
+  agenda: {
+    items: [
+      { key: "현장실사 대상지역 선정",
+        desc: "제시된 우선 현장실사 검토대상(안)을 토대로 사업규모, 사업특성, 조정 필요성 등을 종합적으로 검토하여 현장실사가 필요한 사업 및 대상지역 선정",
+        note: "제시된 검토대상 외에 조정위원이 추가적인 현장 확인이 필요한 사업 확인" },
+      { key: "현장실사 일정 협의",
+        desc: "현장실사 대상지역 선정 결과를 토대로 8월 말~9월 중 조정위원 참석 가능 일자를 확인하여 권역별 현장실사 일정 협의",
+        note: "현장실사 대상사업 선정 후 해당 사업 담당 조정위원을 우선 배정하고, 현장실사 대상사업이 없는 조정위원의 참석 가능 일정을 고려하여 사업별 참여위원 구성" }
+    ]
+  }
+};
+
+function renderMeetingSections() {
+  // 제1장 목적
+  const purposeEl = document.getElementById('ch1-purpose');
+  if (purposeEl) purposeEl.innerHTML = MEETING_SECTIONS.ch1.purpose.map(t => '<li>' + escapeHTML(t) + '</li>').join('');
+  // 제1장 대상
+  const targetsEl = document.getElementById('ch1-targets');
+  if (targetsEl) targetsEl.innerHTML = MEETING_SECTIONS.ch1.targets.map(t => '<li>' + escapeHTML(t) + '</li>').join('');
+  // 제1장 선정 기준
+  const critEl = document.getElementById('ch1-criteria');
+  if (critEl) critEl.innerHTML = MEETING_SECTIONS.ch1.criteria.map(c =>
+    '<div class="criteria-item"><div class="criteria-key">' + escapeHTML(c.key) + '</div>' +
+    '<div class="criteria-desc">' + escapeHTML(c.desc) + '</div></div>'
+  ).join('');
+  const ch1noteEl = document.getElementById('ch1-note');
+  if (ch1noteEl) ch1noteEl.textContent = '※ ' + MEETING_SECTIONS.ch1.note;
+
+  // 제3장 권역별
+  const ch3El = document.getElementById('ch3-regions');
+  if (ch3El) ch3El.innerHTML = MEETING_SECTIONS.ch3.regions.map(r =>
+    '<div class="region-row">' +
+      '<div class="rr-name ' + r.cls + '">' + escapeHTML(r.region) + '</div>' +
+      '<div class="rr-desc">' + escapeHTML(r.desc) +
+        (r.sites && r.sites.length > 0
+          ? '<span class="rr-sites">· ' + r.sites.map(escapeHTML).join('<br>· ') + '</span>'
+          : '') +
+      '</div>' +
+      '<div class="rr-count">' + escapeHTML(r.count) + '</div>' +
+    '</div>'
+  ).join('');
+  const ch3excEl = document.getElementById('ch3-exclusion');
+  if (ch3excEl) ch3excEl.textContent = '※ ' + MEETING_SECTIONS.ch3.exclusion;
+
+  // 조정위원 협의사항
+  const agendaEl = document.getElementById('agenda-items');
+  if (agendaEl) agendaEl.innerHTML = MEETING_SECTIONS.agenda.items.map(a =>
+    '<div class="agenda-item">' +
+      '<div class="a-key">' + escapeHTML(a.key) + '</div>' +
+      '<div class="a-desc">' + escapeHTML(a.desc) + '</div>' +
+      '<div class="a-note">' + escapeHTML(a.note) + '</div>' +
+    '</div>'
+  ).join('');
+}
+
 function initDashboard() {
+  try { renderMeetingSections(); } catch(e) { console.error('[renderMeetingSections]', e); }
   try { renderKPIs(); } catch(e) { console.error('[renderKPIs]', e); }
   try { initTabs(); } catch(e) { console.error('[initTabs]', e); }
   try { renderStrategiesFor('부산'); } catch(e) { console.error('[renderStrategies]', e); }
@@ -456,6 +701,5 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 </script>
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79"}' crossorigin="anonymous"></script>
 </body>
 </html>

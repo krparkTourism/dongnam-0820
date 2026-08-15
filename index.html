@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>제8차 권역계획 동남권 현장실사 협의회(8.20)</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="data.js"></script>
+<script src="img_data.js"></script>
+<style>
+  :root {
+    --bg: #f6f4ef;
+    --bg-card: #ffffff;
+    --bg-muted: #efece5;
+    --text: #1a1d21;
+    --text-muted: #667080;
+    --border: #e3ded4;
+    --accent: #1d4b6e;
+    --accent-2: #c9502d;
+    --ink: #0f1419;
+    --busan: #1d6ec2;
+    --daegu: #16a75d;
+    --gyeongbuk: #7a3fbf;
+    --gyeongnam: #c9502d;
+    --shadow: 0 1px 3px rgba(20,25,35,0.06), 0 4px 12px rgba(20,25,35,0.04);
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14181d;
+      --bg-card: #1c2027;
+      --bg-muted: #232830;
+      --text: #e8e6e0;
+      --text-muted: #96a0ad;
+      --border: #2b323b;
+      --accent: #6bb1e0;
+      --ink: #f2efe8;
+      --shadow: 0 1px 3px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.3);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--text);
+    font-family: 'IBM Plex Sans KR', 'Noto Sans KR', -apple-system, sans-serif;
+    font-size: 14px; line-height: 1.55;
+  }
+  .container { max-width: 1440px; margin: 0 auto; padding: 24px 28px 60px; }
+  header { padding-bottom: 20px; border-bottom: 2px solid var(--ink); margin-bottom: 24px; }
+  .eyebrow {
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--text-muted); font-weight: 600; margin-bottom: 6px;
+  }
+  h1 {
+    margin: 0 0 6px; font-family: 'Noto Sans KR', sans-serif;
+    font-size: 28px; font-weight: 900; letter-spacing: -0.02em; color: var(--ink);
+  }
+  .subtitle { color: var(--text-muted); font-size: 13px; }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0 28px; }
+  .kpi {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow);
+  }
+  .kpi-label { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+  .kpi-value { font-size: 28px; font-weight: 700; margin-top: 4px; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .kpi-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .kpi.busan .kpi-value { color: var(--busan); }
+  .kpi.daegu .kpi-value { color: var(--daegu); }
+  .kpi.gyeongbuk .kpi-value { color: var(--gyeongbuk); }
+  .kpi.gyeongnam .kpi-value { color: var(--gyeongnam); }
+
+  .section-title {
+    font-family: 'Noto Sans KR'; font-weight: 700; font-size: 18px;
+    margin: 28px 0 12px; color: var(--ink);
+    padding-bottom: 6px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  .section-title .count {
+    font-size: 12px; font-weight: 500; color: var(--text-muted);
+  }
+
+  .tabs { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .tab {
+    padding: 10px 18px; cursor: pointer; font-size: 14px; font-weight: 500;
+    color: var(--text-muted); border-bottom: 3px solid transparent;
+    transition: all 0.15s; user-select: none;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--ink); font-weight: 700; }
+  .tab.busan.active { border-bottom-color: var(--busan); color: var(--busan); }
+  .tab.daegu.active { border-bottom-color: var(--daegu); color: var(--daegu); }
+  .tab.gyeongbuk.active { border-bottom-color: var(--gyeongbuk); color: var(--gyeongbuk); }
+  .tab.gyeongnam.active { border-bottom-color: var(--gyeongnam); color: var(--gyeongnam); }
+
+  .strategy-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  @media (max-width: 900px) { .strategy-grid { grid-template-columns: 1fr; } .kpi-row { grid-template-columns: repeat(2, 1fr); } }
+  .strategy-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow);
+    border-left: 4px solid var(--accent);
+  }
+  .strategy-card.busan { border-left-color: var(--busan); }
+  .strategy-card.daegu { border-left-color: var(--daegu); }
+  .strategy-card.gyeongbuk { border-left-color: var(--gyeongbuk); }
+  .strategy-card.gyeongnam { border-left-color: var(--gyeongnam); }
+  .strategy-badge {
+    display: inline-block; font-size: 10px; letter-spacing: .08em;
+    padding: 2px 8px; border-radius: 20px; margin-bottom: 6px;
+    background: var(--bg-muted); color: var(--text-muted); font-weight: 600;
+  }
+  .strategy-title {
+    font-weight: 700; font-size: 15px; margin: 4px 0 10px;
+    color: var(--ink); line-height: 1.35;
+  }
+  .task-list { margin: 0; padding: 0; list-style: none; }
+  .task-list li {
+    padding: 6px 0 6px 14px; border-top: 1px dashed var(--border);
+    font-size: 13px; color: var(--text); line-height: 1.5;
+    position: relative;
+  }
+  .task-list li:before {
+    content: '·'; position: absolute; left: 4px; color: var(--text-muted);
+    font-weight: 700;
+  }
+  .task-list li:first-child { border-top: 0; }
+  .empty-note { color: var(--text-muted); font-style: italic; font-size: 12px; padding: 8px 0; }
+
+  .map-layout { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
+  @media (max-width: 1000px) { .map-layout { grid-template-columns: 1fr; } }
+  #map {
+    height: 620px; border-radius: var(--radius);
+    border: 1px solid var(--border); box-shadow: var(--shadow);
+    background: var(--bg-muted);
+  }
+  .site-list {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow);
+    max-height: 620px; overflow-y: auto;
+  }
+  .site-item {
+    padding: 12px 14px; border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: background 0.15s;
+  }
+  .site-item:hover { background: var(--bg-muted); }
+  .site-item.excluded { opacity: 0.7; background: repeating-linear-gradient(45deg, transparent, transparent 6px, var(--bg-muted) 6px, var(--bg-muted) 7px); }
+  .site-item:last-child { border-bottom: none; }
+  .site-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 3px; }
+  .site-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%;
+    font-size: 11px; font-weight: 700; color: white;
+    flex-shrink: 0;
+  }
+  .site-num.busan { background: var(--busan); }
+  .site-num.gyeongbuk { background: var(--gyeongbuk); }
+  .site-num.gyeongnam { background: var(--gyeongnam); }
+  .site-num.excluded { background: var(--text-muted); }
+  .site-name { font-weight: 600; font-size: 13.5px; color: var(--ink); flex: 1; }
+  .site-name .excl-tag {
+    display: inline-block; font-size: 10px; font-weight: 600;
+    background: #c9502d; color: white; padding: 1px 6px; border-radius: 3px;
+    margin-left: 6px; letter-spacing: .04em;
+  }
+  .site-addr { font-size: 12px; color: var(--text-muted); margin: 3px 0 5px 30px; }
+  .site-meta { font-size: 11px; color: var(--text-muted); margin-left: 30px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .site-meta b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  .leaflet-popup-content-wrapper { border-radius: 8px; box-shadow: var(--shadow); }
+  .popup-content { min-width: 220px; max-width: 300px; font-family: inherit; }
+  .popup-content h4 { margin: 0 0 6px; font-size: 14px; color: var(--ink); font-weight: 700; }
+  .popup-content .pop-addr { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+  .popup-content .pop-desc { font-size: 12px; color: var(--text); line-height: 1.5; }
+  .popup-content img { width: 100%; border-radius: 4px; margin: 6px 0; border: 1px solid var(--border); }
+  .popup-content .pop-tag {
+    display: inline-block; font-size: 10px; padding: 2px 6px; border-radius: 3px;
+    background: var(--bg-muted); color: var(--text-muted); font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .popup-content .pop-excl {
+    background: #ffe5df; color: #8b2f14; padding: 4px 8px; border-radius: 4px;
+    font-size: 11px; margin-top: 6px; font-weight: 600;
+  }
+
+  .legend {
+    background: var(--bg-card); padding: 10px 14px; border-radius: 6px;
+    box-shadow: var(--shadow); font-size: 12px; border: 1px solid var(--border);
+    line-height: 1.9;
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .legend-dot.busan { background: var(--busan); }
+  .legend-dot.gyeongbuk { background: var(--gyeongbuk); }
+  .legend-dot.gyeongnam { background: var(--gyeongnam); }
+  .legend-dot.excluded {
+    background: var(--text-muted);
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255,255,255,0.5) 2px, rgba(255,255,255,0.5) 3px);
+  }
+
+  .marker-pin {
+    width: 30px; height: 30px; border-radius: 50% 50% 50% 0;
+    background: var(--accent); transform: rotate(-45deg);
+    border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 13px;
+  }
+  .marker-pin span { transform: rotate(45deg); }
+  .marker-pin.busan { background: var(--busan); }
+  .marker-pin.gyeongbuk { background: var(--gyeongbuk); }
+  .marker-pin.gyeongnam { background: var(--gyeongnam); }
+  .marker-pin.excluded { background: var(--text-muted); opacity: 0.85; border-color: #ffe5df; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="eyebrow">동남권 · 2026.08.20</div>
+    <h1>제8차 권역계획 동남권 현장실사 협의회(8.20)</h1>
+    <div class="subtitle">부산·대구·경북·경남 전략별 관광개발 및 신규 관광(단)지 현장실사 대상지(7개소)</div>
+  </header>
+
+  <div class="kpi-row">
+    <div class="kpi busan"><div class="kpi-label">부산</div><div class="kpi-value" id="kpi-부산">–</div><div class="kpi-sub">전략 · 세부과제 수</div></div>
+    <div class="kpi daegu"><div class="kpi-label">대구</div><div class="kpi-value" id="kpi-대구">–</div><div class="kpi-sub">전략 · 세부과제 수</div></div>
+    <div class="kpi gyeongbuk"><div class="kpi-label">경북</div><div class="kpi-value" id="kpi-경북">–</div><div class="kpi-sub">전략 · 세부과제 수</div></div>
+    <div class="kpi gyeongnam"><div class="kpi-label">경남</div><div class="kpi-value" id="kpi-경남">–</div><div class="kpi-sub">전략 · 세부과제 수</div></div>
+  </div>
+
+  <div class="section-title">전략별 관광개발 <span class="count">지역 탭을 선택하면 해당 지역의 전략과 세부과제가 표시됩니다</span></div>
+  <div class="tabs">
+    <div class="tab busan active" data-region="부산">부산</div>
+    <div class="tab daegu" data-region="대구">대구</div>
+    <div class="tab gyeongbuk" data-region="경북">경북</div>
+    <div class="tab gyeongnam" data-region="경남">경남</div>
+  </div>
+  <div id="strategy-body"></div>
+
+  <div class="section-title">신규 관광(단)지 현장실사 대상 <span class="count">동남권 7개소 (통영 도산관광단지 제외)</span></div>
+  <div class="map-layout">
+    <div>
+      <div id="map"></div>
+      <div style="margin-top: 8px;">
+        <div class="legend" style="display: inline-block;">
+          <div class="legend-item"><span class="legend-dot busan"></span>부산 (2)</div>
+          <div class="legend-item"><span class="legend-dot gyeongbuk"></span>경북 (2)</div>
+          <div class="legend-item"><span class="legend-dot gyeongnam"></span>경남 (3)</div>
+          <div class="legend-item"><span class="legend-dot excluded"></span>통영 도산관광단지 (현장실사 제외)</div>
+        </div>
+      </div>
+    </div>
+    <div class="site-list" id="site-list"></div>
+  </div>
+</div>
+
+<script>
+const REGION_CLASS = { '부산':'busan','대구':'daegu','경북':'gyeongbuk','경남':'gyeongnam' };
+const strategies = window.DASHBOARD_DATA.strategies;
+const sites = window.DASHBOARD_DATA.sites;
+let mapInstance = null;
+const markerMap = {};
+
+function escapeHTML(s) {
+  if (s === null || s === undefined) return '';
+  const d = document.createElement('div'); d.textContent = String(s); return d.innerHTML;
+}
+
+function renderKPIs() {
+  const c = { '부산':[0,0], '대구':[0,0], '경북':[0,0], '경남':[0,0] };
+  strategies.forEach(s => { if (c[s.region]) { c[s.region][0]++; c[s.region][1] += (s.tasks || []).length; } });
+  Object.keys(c).forEach(k => { document.getElementById('kpi-' + k).textContent = c[k][0] + ' · ' + c[k][1]; });
+}
+
+function renderStrategiesFor(region) {
+  const body = document.getElementById('strategy-body');
+  body.innerHTML = '';
+  const grid = document.createElement('div');
+  grid.className = 'strategy-grid';
+  const items = strategies.filter(s => s.region === region);
+  const cls = REGION_CLASS[region];
+  items.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'strategy-card ' + cls;
+    const catLabel = (s.category === '개발' || s.category === '진흥') ? '[' + s.category + '] ' : '';
+    const badge = catLabel + '전략 ' + s.strategy_no;
+    const tasksHtml = (s.tasks && s.tasks.length)
+      ? '<ul class="task-list">' + s.tasks.map(t => '<li>' + escapeHTML(t) + '</li>').join('') + '</ul>'
+      : '<div class="empty-note">세부과제 데이터 없음</div>';
+    card.innerHTML =
+      '<div class="strategy-badge">' + escapeHTML(badge) + '</div>' +
+      '<div class="strategy-title">' + escapeHTML(s.strategy_name) + '</div>' +
+      tasksHtml;
+    grid.appendChild(card);
+  });
+  body.appendChild(grid);
+}
+
+function initTabs() {
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      renderStrategiesFor(tab.dataset.region);
+    });
+  });
+}
+
+function buildMarkerIcon(region, siteNo, excluded) {
+  const cls = excluded ? 'excluded' : REGION_CLASS[region] || '';
+  return L.divIcon({
+    className: 'custom-marker',
+    html: '<div class="marker-pin ' + cls + '"><span>' + siteNo + '</span></div>',
+    iconSize: [30, 42], iconAnchor: [15, 42], popupAnchor: [0, -38]
+  });
+}
+
+function renderMap() {
+  mapInstance = L.map('map', { scrollWheelZoom: true, zoomControl: true }).setView([35.5, 128.5], 7);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap', maxZoom: 19
+  }).addTo(mapInstance);
+
+  const bounds = [];
+  sites.forEach(site => {
+    if (!site.lat || !site.lng) return;
+    const excluded = !site.included_in_field_survey;
+    const icon = buildMarkerIcon(site.region, site.site_no, excluded);
+    const marker = L.marker([site.lat, site.lng], { icon }).addTo(mapInstance);
+
+    let imgHtml = '';
+    if (site.location_image && window.LOC_IMAGES && window.LOC_IMAGES[site.location_image]) {
+      imgHtml = '<img src="' + window.LOC_IMAGES[site.location_image] + '" alt="' + escapeHTML(site.site_name) + ' 위치도" />';
+    }
+    const budgetTxt = site.budget_million ? Number(site.budget_million).toLocaleString() + '백만원' : '-';
+    const exclHtml = excluded ? '<div class="pop-excl">※ ' + escapeHTML(site.exclusion_note || '현장조사 제외') + '</div>' : '';
+
+    const popupHtml =
+      '<div class="popup-content">' +
+        '<div class="pop-tag">' + escapeHTML(site.region) + ' · ' + escapeHTML(site.site_type) + '</div>' +
+        '<h4>' + escapeHTML(site.site_name) + '</h4>' +
+        '<div class="pop-addr">' + escapeHTML(site.address) + '</div>' +
+        imgHtml +
+        '<div class="pop-desc"><b>사업내용:</b> ' + escapeHTML(site.business_content) + '</div>' +
+        '<div class="pop-desc" style="margin-top:4px;"><b>사업기간:</b> ' + escapeHTML(site.period) + ' · <b>총사업비:</b> ' + escapeHTML(budgetTxt) + '</div>' +
+        exclHtml +
+      '</div>';
+    marker.bindPopup(popupHtml, { maxWidth: 320 });
+    markerMap[site.id] = marker;
+    bounds.push([site.lat, site.lng]);
+  });
+  if (bounds.length > 0) mapInstance.fitBounds(bounds, { padding: [40, 40] });
+}
+
+function renderSiteList() {
+  const el = document.getElementById('site-list');
+  el.innerHTML = '';
+  sites.forEach(site => {
+    const excluded = !site.included_in_field_survey;
+    const cls = excluded ? 'excluded' : REGION_CLASS[site.region];
+    const item = document.createElement('div');
+    item.className = 'site-item' + (excluded ? ' excluded' : '');
+    const budgetTxt = site.budget_million ? Number(site.budget_million).toLocaleString() : '-';
+    const exclTag = excluded ? '<span class="excl-tag">현장조사 제외</span>' : '';
+    item.innerHTML =
+      '<div class="site-head">' +
+        '<span class="site-num ' + cls + '">' + site.site_no + '</span>' +
+        '<div class="site-name">' +
+          '<span style="color: var(--text-muted); font-weight:500; margin-right:6px;">[' + escapeHTML(site.region) + ']</span>' +
+          escapeHTML(site.site_name) + exclTag +
+        '</div>' +
+      '</div>' +
+      '<div class="site-addr">📍 ' + escapeHTML(site.address) + '</div>' +
+      '<div class="site-meta">' +
+        '<span>사업기간 <b>' + escapeHTML(site.period) + '</b></span>' +
+        '<span>총사업비 <b>' + budgetTxt + ' 백만원</b></span>' +
+      '</div>';
+    item.addEventListener('click', () => {
+      const m = markerMap[site.id];
+      if (m && mapInstance) { mapInstance.setView(m.getLatLng(), 12, { animate: true }); m.openPopup(); }
+    });
+    el.appendChild(item);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  renderKPIs();
+  initTabs();
+  renderStrategiesFor('부산');
+  renderMap();
+  renderSiteList();
+});
+</script>
+</body>
+</html>

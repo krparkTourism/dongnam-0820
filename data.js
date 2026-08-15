@@ -169,7 +169,7 @@ window.DASHBOARD_DATA = {
       review_reason:'신규 관광단지 조성, 입지 및 사업실현 가능성 확인 必',
       included_in_field_survey:true, exclusion_note:null, location_image:'image1' },
     { id:5, region:'경남', site_no:1, site_name:'통영 도산관광단지', site_type:'관광단지',
-      address:'경남 통영시 도산면 수월리 산27-1번지', lat:34.9236, lng:128.3603,
+      address:'통영시 도산면 수월리 산27-1번지', lat:34.8769223859693, lng:128.347242560004,
       business_content:'풍부한 지역자원을 활용한 통영 도산권 체류형 관광거점 개발',
       period:'2025~2037', budget_million:1260900,
       review_reason:'신규 관광단지 조성, 입지 및 사업실현 가능성 확인 必 / 문체부 사전협의 완료',

@@ -32,8 +32,14 @@ python3 -m http.server 8080
 # 브라우저에서 http://localhost:8080 접속
 ```
 
-외부 의존성: Leaflet 1.9.4 (CDN), Google Fonts (Noto Sans KR, IBM Plex Sans KR).
+외부 의존성: 네이버 지도 API v3 (Client ID 인증), Google Fonts (Noto Sans KR, IBM Plex Sans KR).
 데이터·이미지는 모두 로컬 파일에 내장되어 있어 오프라인에서도 지도 타일을 제외한 콘텐츠는 동작합니다.
+
+## 네이버 지도 API 설정
+
+`index.html` 상단의 스크립트 태그에서 `ncpKeyId` 값이 배포 환경의 등록 도메인과 일치해야 합니다.
+지도가 표시되지 않는 경우 네이버 클라우드 플랫폼 콘솔의 Application → Web 서비스 URL에
+배포 도메인(예: `https://krparktourism.github.io`)이 등록되어 있는지 확인하세요.
 
 ## 라이선스
 

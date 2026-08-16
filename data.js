@@ -129,7 +129,7 @@ window.DASHBOARD_DATA = {
       '생태·녹색관광자원개발사업'
     ]},
     { region:'경남', strategy_no:2, strategy_name:'경남형 관광매력 고도화를 통한 글로벌 브랜드 가치 제고', category:'진흥·개발', tasks:[
-      '지역특화 관광인프라 조성'
+      '지역특화 관광인프라 조성',
       '경남 시그니처 관광상품 육성'
     ]},
     { region:'경남', strategy_no:3, strategy_name:'여행에서 생활로 이어지는 경남형 체류관광 활성화', category:'진흥·개발', tasks:[
